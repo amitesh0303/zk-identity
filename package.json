@@ -1,0 +1,17 @@
+{
+  "name": "zk-identity",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Zero-knowledge identity protocol for privacy-preserving verification on Solana",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "test:backend": "cd backend && npm test",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
