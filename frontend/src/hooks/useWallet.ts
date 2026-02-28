@@ -19,8 +19,23 @@ export function useWallet(): WalletState & {
   // Detect if Phantom / any Solana wallet is available
   const getProvider = useCallback(() => {
     if (typeof window === "undefined") return null;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const win = window as any;
+    interface SolanaProvider {
+      isConnected?: boolean;
+      publicKey?: { toString(): string };
+      connect(): Promise<void>;
+      disconnect(): Promise<void>;
+      signMessage(
+        msg: Uint8Array,
+        encoding: string
+      ): Promise<{ signature: Uint8Array }>;
+      on(event: string, handler: () => void): void;
+      off(event: string, handler: () => void): void;
+    }
+    interface WindowWithSolana extends Window {
+      solana?: SolanaProvider;
+      phantom?: { solana?: SolanaProvider };
+    }
+    const win = window as WindowWithSolana;
     return win.solana ?? win.phantom?.solana ?? null;
   }, []);
 

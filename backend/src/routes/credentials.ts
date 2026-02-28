@@ -12,7 +12,16 @@ const issueSchema = Joi.object({
     .valid("age_verification", "citizenship", "income")
     .required(),
   commitment: Joi.string().hex().length(64).required(),
-  expiresAt: Joi.number().integer().min(Date.now() / 1000).required(),
+  expiresAt: Joi.number()
+    .integer()
+    .min(0)
+    .custom((value, helpers) => {
+      if (value <= Math.floor(Date.now() / 1000)) {
+        return helpers.error("number.min");
+      }
+      return value;
+    })
+    .required(),
   issuerSignature: Joi.string().required(),
 });
 

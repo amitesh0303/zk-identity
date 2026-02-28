@@ -84,12 +84,16 @@ export class VerificationService {
           input.proof
         );
       } else {
-        // Development fallback: accept well-formed proofs
-        valid =
-          input.proof.pi_a.length === 3 &&
-          input.proof.pi_b.length === 3 &&
-          input.proof.pi_c.length === 3 &&
-          input.publicSignals.length > 0;
+    // Development fallback: accept well-formed proofs only when explicitly enabled.
+      // This must NEVER be enabled in production.
+      if (process.env.NODE_ENV === "production") {
+        throw new Error("Verification key not found; cannot verify in production");
+      }
+      valid =
+        input.proof.pi_a.length === 3 &&
+        input.proof.pi_b.length === 3 &&
+        input.proof.pi_c.length === 3 &&
+        input.publicSignals.length > 0;
       }
     } catch (err) {
       logger.error("Proof verification error", { err });

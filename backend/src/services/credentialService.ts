@@ -25,7 +25,6 @@ export class CredentialService {
   async issue(input: IssueCredentialInput): Promise<Credential> {
     const id = uuidv4();
 
-    // Check for duplicate commitment
     const existing = await db.query(
       "SELECT id FROM credentials WHERE commitment = $1",
       [input.commitment]
@@ -54,14 +53,22 @@ export class CredentialService {
   }
 
   async revoke(credentialId: string, issuerSignature: string): Promise<void> {
-    const result = await db.query(
-      "UPDATE credentials SET revoked = true WHERE id = $1 AND issuer_signature = $2",
-      [credentialId, issuerSignature]
+    // First check the credential exists
+    const findResult = await db.query(
+      "SELECT issuer_signature FROM credentials WHERE id = $1",
+      [credentialId]
     );
-
-    if (result.rowCount === 0) {
-      throw new Error("Credential not found or signature mismatch");
+    if (findResult.rows.length === 0) {
+      throw new Error("Credential not found");
     }
+    if (findResult.rows[0].issuer_signature !== issuerSignature) {
+      throw new Error("Issuer signature mismatch");
+    }
+
+    await db.query(
+      "UPDATE credentials SET revoked = true WHERE id = $1",
+      [credentialId]
+    );
 
     logger.info("Credential revoked", { credentialId });
   }

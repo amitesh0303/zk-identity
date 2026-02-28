@@ -1,9 +1,5 @@
 import type { ZKProof, CredentialType } from "../types";
 
-// snarkjs is a CommonJS module; use dynamic require for browser compatibility
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const require: (mod: string) => any;
-
 export interface ProofArtifacts {
   proof: ZKProof;
   publicSignals: string[];
