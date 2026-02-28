@@ -17,7 +17,7 @@ const issueSchema = Joi.object({
     .min(0)
     .custom((value, helpers) => {
       if (value <= Math.floor(Date.now() / 1000)) {
-        return helpers.error("number.min");
+        return helpers.message({ custom: "Expiration must be in the future" });
       }
       return value;
     })

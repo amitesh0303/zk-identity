@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 import dotenv from "dotenv";
+import { logger } from "../middleware/auth";
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ const pool = new Pool({
 });
 
 pool.on("error", (err) => {
-  console.error("Unexpected PostgreSQL pool error", err);
+  logger.error("Unexpected PostgreSQL pool error", err);
 });
 
 export const db = {

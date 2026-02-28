@@ -3,20 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "description": "Zero-knowledge identity protocol for privacy-preserving verification on Solana",
-  "workspaces": [
-    "backend",
-    "frontend"
-  ],
   "scripts": {
-    "dev:backend": "yarn workspace zk-identity-backend dev",
-    "dev:frontend": "yarn workspace zk-identity-frontend dev",
-    "build:backend": "yarn workspace zk-identity-backend build",
-    "build:frontend": "yarn workspace zk-identity-frontend build",
-    "test:backend": "yarn workspace zk-identity-backend test",
-    "lint": "yarn workspaces run lint"
-  },
-  "devDependencies": {
-    "typescript": "^5.3.2"
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build:backend": "cd backend && npm run build",
+    "build:frontend": "cd frontend && npm run build",
+    "test:backend": "cd backend && npm test",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install"
   },
   "engines": {
     "node": ">=18.0.0"

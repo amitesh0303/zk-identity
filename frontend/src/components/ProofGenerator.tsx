@@ -36,7 +36,13 @@ export function ProofGenerator({ walletPublicKey }: ProofGeneratorProps) {
     setStep("generating");
     setErrorMsg("");
     try {
-      const salt = BigInt(Math.floor(Math.random() * 2 ** 53));
+      const saltArray = new Uint8Array(32);
+      crypto.getRandomValues(saltArray);
+      // Convert 32 random bytes to a BigInt for use as a circuit salt
+      const salt = saltArray.reduce(
+        (acc, byte) => acc * BigInt(256) + BigInt(byte),
+        BigInt(0)
+      );
 
       let inputs: Record<string, string | number | bigint> = {};
       if (circuitType === "age_verification") {

@@ -68,7 +68,7 @@ export class VerificationService {
 
     const credential = credResult.rows[0];
     const now = new Date();
-    if (new Date(credential.expires_at) < now) {
+    if (new Date(credential.expires_at as string) < now) {
       throw new Error("Credential has expired");
     }
 
@@ -84,16 +84,23 @@ export class VerificationService {
           input.proof
         );
       } else {
-    // Development fallback: accept well-formed proofs only when explicitly enabled.
-      // This must NEVER be enabled in production.
-      if (process.env.NODE_ENV === "production") {
-        throw new Error("Verification key not found; cannot verify in production");
-      }
-      valid =
-        input.proof.pi_a.length === 3 &&
-        input.proof.pi_b.length === 3 &&
-        input.proof.pi_c.length === 3 &&
-        input.publicSignals.length > 0;
+        // No verification key found: reject the proof.
+        // Set UNSAFE_DEV_BYPASS_VKEY=true only in non-production dev environments
+        // to accept well-formed-but-unverified proofs for local circuit testing.
+        // WARNING: This MUST never be set in production.
+        if (process.env.UNSAFE_DEV_BYPASS_VKEY === "true") {
+          if (process.env.NODE_ENV === "production") {
+            throw new Error("UNSAFE_DEV_BYPASS_VKEY cannot be enabled in production");
+          }
+          logger.warn("UNSAFE_DEV_BYPASS_VKEY enabled — skipping cryptographic proof verification");
+          valid =
+            input.proof.pi_a.length === 3 &&
+            input.proof.pi_b.length === 3 &&
+            input.proof.pi_c.length === 3 &&
+            input.publicSignals.length > 0;
+        } else {
+          throw new Error("Verification key not found; cannot verify proof");
+        }
       }
     } catch (err) {
       logger.error("Proof verification error", { err });
@@ -131,6 +138,6 @@ export class VerificationService {
     );
     if (result.rows.length === 0) return null;
     const row = result.rows[0];
-    return { valid: row.valid, verifiedAt: row.verified_at };
+    return { valid: row.valid as boolean, verifiedAt: row.verified_at as string };
   }
 }

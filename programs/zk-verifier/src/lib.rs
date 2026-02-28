@@ -116,8 +116,13 @@ pub mod zk_verifier {
     }
 }
 
-// Simplified Groth16 verification placeholder.
-// In production, this would implement full Groth16 pairing checks.
+// PLACEHOLDER: Structural validity check only.
+// ⚠️  WARNING: This function does NOT perform cryptographic Groth16 pairing verification.
+//     It only checks that the proof byte arrays are non-empty.
+//     Before any production or mainnet deployment, replace this with a full
+//     Groth16 on-chain verifier using BN254 elliptic-curve pairing checks.
+//     A production implementation should use a pre-compiled verifier generated
+//     by `snarkjs generateverifier` or an equivalent Solana-compatible library.
 fn verify_groth16_proof(
     proof_a: &[u8; 64],
     proof_b: &[u8; 128],
